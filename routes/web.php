@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Task;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,32 +16,12 @@ use App\Models\Task;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Auth::routes();
 
-Route::get('/tasks', function () {
-    $tasks = Task::all();
-    return view('tasks', [
-        'tasks' => $tasks
-    ]);
-});
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::post('/tasks', function (Request $request) {
-    $task = new Task;
+Route::get('/dashboard', [TaskController::class, 'index'])->name('dashboard');
+Route::post('/task', [TaskController::class, 'store'])->name('task');
+Route::delete('/task/{id}', [TaskController::class, 'delete'])->name('task_delete');
 
-    $task->name = $request->input('name');
-    $task->state = true;
-
-    $task->save();
-    return redirect('/tasks');
-});
-
-Route::delete('/tasks/{id}', function ($id) {
-    Task::destroy($id);
-    return redirect('/tasks');
-});
-
-Route::put('tasks', function (Request $request) {
-
-});
+Route::get('/', [HomeController::class, 'main'])->name('main');
